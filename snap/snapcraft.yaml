@@ -1,0 +1,46 @@
+name: ascii-draw # you probably want to 'snapcraft register <name>'
+base: core22 # the base snap is the execution environment for this snap
+adopt-info: ascii-draw
+grade: stable # must be 'stable' to release into candidate/stable channels
+confinement: strict # use 'strict' once you have the right plugs and slots
+website: https://github.com/Nokse22/teleprompter
+license: GPL-3.0
+source-code: https://github.com/Nokse22/teleprompter
+issues: https://github.com/Nokse22/teleprompter/issues
+contact: https://github.com/Nokse22/teleprompter
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+  - build-on: armhf
+
+parts:
+  ascii-draw:
+    # See 'snapcraft plugins'
+    plugin: meson
+    source: https://github.com/Nokse22/ascii-draw.git
+    #source-tag: 'v0.1.7'
+    source-depth: 1
+    parse-info: [ usr/share/appdata/io.github.nokse22.asciidraw.appdata.xml ]
+    build-packages:
+      - blueprint-compiler
+    meson-parameters:
+      - --prefix=/snap/ascii-draw/current/usr
+    override-build: |
+      craftctl default
+      sed -e '1c#!/usr/bin/env python3' -i ${CRAFT_PART_INSTALL}/snap/ascii-draw/current/usr/bin/ascii-draw
+      chmod +x $CRAFT_PART_INSTALL/snap/ascii-draw/current/usr/bin/ascii-draw
+    organize:
+      snap/ascii-draw/current: .
+
+slots:
+  ascii-draw:
+    interface: dbus
+    bus: session
+    name: io.github.nokse22.asciidraw
+
+apps:
+  ascii-draw:
+    command: usr/bin/ascii-draw
+    extensions: [ gnome ]
+    common-id: io.github.nokse22.asciidraw
+    desktop: usr/share/applications/io.github.nokse22.asciidraw.desktop
