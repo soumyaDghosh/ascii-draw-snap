@@ -17,7 +17,7 @@ parts:
   ascii-draw:
     plugin: meson
     source: https://github.com/Nokse22/ascii-draw.git
-    source-tag: 'v0.1.4'
+    source-tag: 'v0.1.5'
     source-depth: 1
     parse-info: [ usr/share/metainfo/io.github.nokse22.asciidraw.metainfo.xml ]
     build-packages:
