@@ -57,7 +57,7 @@ parts:
     after: [ emoji ]
     plugin: meson
     source: https://github.com/Nokse22/ascii-draw.git
-    source-tag: 'v0.1.6'
+    source-tag: 'v0.1.7'
     source-depth: 1
     parse-info: [ usr/share/metainfo/io.github.nokse22.asciidraw.metainfo.xml ]
     build-packages:
