@@ -1,31 +1,21 @@
 name: ascii-draw 
-base: core22 
+base: core24 
 adopt-info: ascii-draw
 grade: stable 
-confinement: strict 
-website: https://github.com/Nokse22/teleprompter
-license: GPL-3.0
-source-code: https://github.com/Nokse22/teleprompter
-issues: https://github.com/Nokse22/teleprompter/issues
-contact: https://github.com/Nokse22/teleprompter
-architectures:
-  - build-on: amd64
-  - build-on: arm64
-  - build-on: armhf
+confinement: strict
+platforms:
+  amd64:
+  arm64:
 
 parts:
-  emoji:
-    source: https://github.com/carpedm20/emoji.git
-    source-tag: 'v2.8.0'
+  python-deps:
+    source: .
 # ext:updatesnap
 #   version-format:
 #     ignore: true
     plugin: python
-    build-environment:
-      # WORKAROUND: The python plugin is broken with gnome extension
-      - PATH: ${CRAFT_PART_INSTALL}/bin:${PATH}
-      - PYTHONPATH: ""
     python-packages:
+      - emoji==2.8.0
       - pyfiglet==0.8.post1 
     prime:
       - -usr/bin/activate
@@ -39,11 +29,11 @@ parts:
       - -usr/bin/pip3
       - -usr/bin/pip3.10
       - -pyvenv.cfg
-      - -usr/lib/python3.10/site-packages/gi
-      - -usr/lib/python3.10/site-packages/pygtkcompat
-      - -usr/lib/python3.10/site-packages/PyG*
-      - -usr/lib/python3.10/site-packages/pycairo*
-      - -usr/lib/python3.10/site-packages/cairo*
+      - -usr/lib/*/site-packages/gi
+      - -usr/lib/*/site-packages/pygtkcompat
+      - -usr/lib/*/site-packages/PyG*
+      - -usr/lib/*/site-packages/pycairo*
+      - -usr/lib/*/site-packages/cairo*
       - -usr/lib/*/*/setup*
       - -usr/lib/*/*/pkg*
       - -usr/lib/*/*/pip*
@@ -52,16 +42,17 @@ parts:
       - -include
     organize:
       bin: usr/bin
-      lib/python3.10/site-packages: usr/lib/python3.10/dist-packages
+      lib/python3.12/site-packages: usr/lib/python3/dist-packages
+
   ascii-draw:
-    after: [ emoji ]
+    after: [ python-deps ]
     plugin: meson
     source: https://github.com/Nokse22/ascii-draw.git
-    source-tag: 'v0.3.0'
+    source-tag: 'v0.4.0'
     source-depth: 1
     parse-info: [ usr/share/metainfo/io.github.nokse22.asciidraw.metainfo.xml ]
-    build-packages:
-      - blueprint-compiler
+    build-snaps:
+      - blueprint-compiler/latest/edge
     meson-parameters:
       - --prefix=/snap/ascii-draw/current/usr
     override-build: |
@@ -83,6 +74,5 @@ apps:
     extensions: [ gnome ]
     common-id: io.github.nokse22.asciidraw
     environment:
-      PYTHONPATH: $SNAP/usr/lib/python3.10/dist-packages:$PYTHONPATH
-      GDK_DEBUG: 'portals'
+      PYTHONPATH: $SNAP/usr/lib/python3/dist-packages:$PYTHONPATH
     desktop: usr/share/applications/io.github.nokse22.asciidraw.desktop
